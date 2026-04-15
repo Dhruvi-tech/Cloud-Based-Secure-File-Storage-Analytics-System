@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { deleteFileFromStore, getFiles } from '../utils/filesStore';
 
 function formatBytes(bytes) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -22,10 +23,8 @@ function FileList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/files')
-      .then(response => response.json())
-      .then(setFiles)
-      .finally(() => setLoading(false));
+    setFiles(getFiles());
+    setLoading(false);
   }, []);
 
   const types = useMemo(() => {
@@ -60,10 +59,10 @@ function FileList() {
     });
   }, [files, search, typeFilter, sortBy]);
 
-  const deleteFile = async id => {
-    const response = await fetch(`/api/delete?id=${id}`, { method: 'DELETE' });
+  const deleteFile = id => {
+    const deleted = deleteFileFromStore(id);
 
-    if (!response.ok) {
+    if (!deleted) {
       toast.error('Delete failed');
       return;
     }

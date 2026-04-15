@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { getAnalytics } from '../utils/filesStore';
 
 function formatBytes(bytes) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -25,15 +26,13 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/analytics')
-      .then(response => response.json())
-      .then(payload => {
-        setData(payload);
-      })
-      .catch(() => {
-        setData({ totalFiles: 0, totalStorage: 0, avgSize: 0, fileTypes: {}, recent: [] });
-      })
-      .finally(() => setLoading(false));
+    try {
+      setData(getAnalytics());
+    } catch (_error) {
+      setData({ totalFiles: 0, totalStorage: 0, avgSize: 0, fileTypes: {}, recent: [] });
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   return (

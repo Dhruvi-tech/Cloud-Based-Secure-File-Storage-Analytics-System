@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Pie } from 'react-chartjs-2';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
+import { getAnalytics } from '../utils/filesStore';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -10,25 +11,22 @@ function Charts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/analytics')
-      .then(response => response.json())
-      .then(data => {
-        const labels = Object.keys(data.fileTypes || {});
-        const values = Object.values(data.fileTypes || {});
+    const data = getAnalytics();
+    const labels = Object.keys(data.fileTypes || {});
+    const values = Object.values(data.fileTypes || {});
 
-        setChartData({
-          labels,
-          datasets: [
-            {
-              data: values,
-              backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#14b8a6'],
-              borderColor: '#0f172a',
-              borderWidth: 2
-            }
-          ]
-        });
-      })
-      .finally(() => setLoading(false));
+    setChartData({
+      labels,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#14b8a6'],
+          borderColor: '#0f172a',
+          borderWidth: 2
+        }
+      ]
+    });
+    setLoading(false);
   }, []);
 
   return (

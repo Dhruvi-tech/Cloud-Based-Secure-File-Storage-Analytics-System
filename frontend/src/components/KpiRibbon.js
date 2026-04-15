@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getAnalytics } from '../utils/filesStore';
 
 function formatBytes(bytes) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -55,32 +56,26 @@ function KpiRibbon() {
   });
 
   useEffect(() => {
-    fetch('/api/analytics')
-      .then(response => response.json())
-      .then(payload => {
-        const current = {
-          totalFiles: Number(payload.totalFiles) || 0,
-          totalStorage: Number(payload.totalStorage) || 0,
-          avgSize: Number(payload.avgSize) || 0,
-          typeCount: Object.keys(payload.fileTypes || {}).length
-        };
+    const payload = getAnalytics();
+    const current = {
+      totalFiles: Number(payload.totalFiles) || 0,
+      totalStorage: Number(payload.totalStorage) || 0,
+      avgSize: Number(payload.avgSize) || 0,
+      typeCount: Object.keys(payload.fileTypes || {}).length
+    };
 
-        const previousRaw = localStorage.getItem('kpi-snapshot-v1');
-        const previous = previousRaw ? JSON.parse(previousRaw) : current;
+    const previousRaw = localStorage.getItem('kpi-snapshot-v1');
+    const previous = previousRaw ? JSON.parse(previousRaw) : current;
 
-        setKpis(current);
-        setTrend({
-          files: trendInfo(current.totalFiles, previous.totalFiles),
-          storage: trendInfo(current.totalStorage, previous.totalStorage),
-          avg: trendInfo(current.avgSize, previous.avgSize),
-          types: trendInfo(current.typeCount, previous.typeCount)
-        });
+    setKpis(current);
+    setTrend({
+      files: trendInfo(current.totalFiles, previous.totalFiles),
+      storage: trendInfo(current.totalStorage, previous.totalStorage),
+      avg: trendInfo(current.avgSize, previous.avgSize),
+      types: trendInfo(current.typeCount, previous.typeCount)
+    });
 
-        localStorage.setItem('kpi-snapshot-v1', JSON.stringify(current));
-      })
-      .catch(() => {
-        // Keep defaults when analytics is unavailable.
-      });
+    localStorage.setItem('kpi-snapshot-v1', JSON.stringify(current));
   }, []);
 
   return (

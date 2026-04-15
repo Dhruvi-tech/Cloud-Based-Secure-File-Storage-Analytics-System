@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { uploadFileToStore } from '../utils/filesStore';
 
 function Upload() {
   const [file, setFile] = useState(null);
   const [drag, setDrag] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('Select a file and upload metadata to MongoDB.');
+  const [message, setMessage] = useState('Select a file and upload metadata to the system.');
   const fileInputRef = useRef(null);
 
-  const uploadFile = async fileToUpload => {
+  const uploadFile = fileToUpload => {
     if (!fileToUpload) {
       alert('No file selected');
       setMessage('Please choose a file first.');
@@ -19,29 +20,8 @@ function Upload() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          filename: fileToUpload.name,
-          size: fileToUpload.size,
-          type: fileToUpload.type || 'unknown',
-          user: localStorage.getItem('user') || 'anonymous'
-        })
-      });
-
-      if (!response.ok) {
-        let errorMessage = 'Upload failed';
-
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData?.error || errorData?.message || errorMessage;
-        } catch (_error) {
-          // Keep default error message when response body is not JSON.
-        }
-
-        throw new Error(errorMessage);
-      }
+      const user = localStorage.getItem('user') || 'anonymous';
+      uploadFileToStore(fileToUpload, user);
 
       setMessage(`Uploaded ${fileToUpload.name}.`);
       toast.success('File Uploaded 🚀');
@@ -54,7 +34,7 @@ function Upload() {
     }
   };
 
-  const handleDrop = async event => {
+  const handleDrop = event => {
     event.preventDefault();
     setDrag(false);
 
@@ -64,7 +44,7 @@ function Upload() {
     }
 
     setFile(droppedFile);
-    await uploadFile(droppedFile);
+    uploadFile(droppedFile);
   };
 
   const handleFileChange = event => {
@@ -72,8 +52,8 @@ function Upload() {
     setFile(selected);
   };
 
-  const handleManualUpload = async () => {
-    await uploadFile(file);
+  const handleManualUpload = () => {
+    uploadFile(file);
   };
 
   return (
