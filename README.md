@@ -1,6 +1,40 @@
 # Cloud-Based Secure File Storage Analytics System
 
-A Vercel-ready React project that stores file metadata in browser localStorage.
+A clean, fast React dashboard for secure file metadata tracking and analytics, fully powered by browser localStorage.
+
+## Live App
+
+Production URL: https://cloud-based-secure-file-storage-analytics-system-dwxgqqi20.vercel.app/
+
+## Why This Project
+
+- Simple deployment on Vercel (no backend services required)
+- Fast user experience with instant localStorage operations
+- Clear dashboard analytics for file insights
+- Great for demos, academic submissions, and portfolio showcase
+
+## Core Features
+
+- Upload file metadata (name, size, type, user, timestamp)
+- View and search uploaded files
+- Delete files instantly
+- Analytics for:
+	- total files
+	- total storage
+	- average file size
+	- file type distribution
+	- recent uploads
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React |
+| Charts | Chart.js + react-chartjs-2 |
+| UI Motion | Framer Motion |
+| Notifications | react-hot-toast |
+| Storage | Browser localStorage |
+| Hosting | Vercel |
 
 ## Project Structure
 
@@ -9,50 +43,37 @@ Cloud-Based-Secure-File-Storage-Analytics-System/
 |- frontend/
 |  |- public/
 |  |- src/
+|  |  |- components/
+|  |  |- utils/
+|  |  `- App.js
 |  |- build/
-|  |- package.json
+|  `- package.json
 |- package.json
 |- vercel.json
 `- README.md
 ```
 
-## Features
+## Local Setup
 
-- Upload file metadata
-- List uploaded files
-- Delete files by generated file ID
-- Analytics for total files, total storage, average file size, type distribution, and recent uploads
-- React dashboard UI with charts
+```bash
+npm install
+npm run start
+```
 
-## Storage Model
-
-- Data is stored in browser `localStorage` under the key `files`.
-- No external database setup is required.
-- Data stays in the user's browser until localStorage is cleared.
-
-## Local Development
-
-Build frontend:
+Create a production build:
 
 ```bash
 npm run build
 ```
 
-Run locally:
+## Deployment (Vercel)
 
-```bash
-npm run start
-```
+1. Push this repository to GitHub.
+2. Import the repo into Vercel.
+3. Deploy without any environment variables.
 
-React runs on the development server with localStorage-backed data.
+## Notes
 
-## Vercel Deployment
-
-1. Push repository to GitHub.
-2. Import project into Vercel.
-3. Deploy.
-
-## Implementation Notes
-
-- `frontend/src/utils/filesStore.js` provides upload/list/delete/analytics operations.
-- Upload, Files, Dashboard, Charts, and KPI components all use localStorage directly.
+- File data is saved in browser localStorage under the key `files`.
+- Data is browser-specific and remains until storage is cleared.
+- The data layer is implemented in `frontend/src/utils/filesStore.js`.
