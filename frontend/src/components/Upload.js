@@ -31,7 +31,16 @@ function Upload() {
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        let errorMessage = 'Upload failed';
+
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData?.error || errorData?.message || errorMessage;
+        } catch (_error) {
+          // Keep default error message when response body is not JSON.
+        }
+
+        throw new Error(errorMessage);
       }
 
       setMessage(`Uploaded ${fileToUpload.name}.`);
