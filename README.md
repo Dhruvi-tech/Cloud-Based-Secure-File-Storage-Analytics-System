@@ -1,85 +1,95 @@
 # Cloud-Based Secure File Storage Analytics System
 
-This repository now uses a Vercel-friendly split between a static frontend and serverless API routes backed by MongoDB.
+A Vercel-ready React + Node serverless project for file metadata storage and analytics using MongoDB Atlas.
 
-## Structure
+## Project Structure
 
 ```text
 Cloud-Based-Secure-File-Storage-Analytics-System/
-├── frontend/
-│   ├── public/
-│   │   └── index.html
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Sidebar.js
-│   │   │   ├── Upload.js
-│   │   │   ├── Dashboard.js
-│   │   │   ├── Charts.js
-│   │   │   ├── FileList.js
-│   │   │   └── Login.js
-│   │   ├── App.js
-│   │   ├── App.css
-│   │   └── index.js
-│   └── package.json
-├── api/
-│   ├── upload.js
-│   ├── files.js
-│   ├── delete.js
-│   ├── analytics.js
-│   └── db.js
-├── utils/
-│   └── storage.js
-├── .env
-├── package.json
-├── vercel.json
-└── README.md
+|- api/
+|  |- analytics.js
+|  |- db.js
+|  |- delete.js
+|  |- files.js
+|  |- upload.js
+|- frontend/
+|  |- public/
+|  |- src/
+|  |- build/
+|  |- package.json
+|- local-dev-server.js
+|- package.json
+|- vercel.json
+|- .env
+`- README.md
 ```
 
-## What it does
+## Features
 
-- Uploads file metadata to MongoDB.
-- Lists stored files.
-- Deletes files by MongoDB `_id`.
-- Aggregates analytics for total files, total storage, and file type counts.
+- Upload file metadata
+- List uploaded files
+- Delete files by MongoDB ObjectId
+- Analytics for total files, total storage, average file size, type distribution, and recent uploads
+- React dashboard UI with charts
 
-## Environment
+## MongoDB Setup
 
-Set this in `.env`:
+Install dependencies:
 
 ```bash
-MONGO_URI=your_mongodb_connection_string
+npm install
 ```
 
-Optional:
+Root `.env` must include:
 
 ```bash
-MONGO_DB_NAME=cloud_storage
+MONGO_URI=mongodb+srv://DHRUVI:YOUR_PASSWORD@cluster0.szqxr8b.mongodb.net/cloud_storage?retryWrites=true&w=majority
 ```
 
-## API routes
+Rules:
+
+- Do not keep angle brackets in the URI
+- Use the real Atlas database user password
+- Keep `/cloud_storage` in the URI path
+
+Atlas checklist:
+
+- Database user exists (`DHRUVI`)
+- Network Access allows your environment (for testing, `0.0.0.0/0`)
+- Cluster is running
+
+## Local Development
+
+Build frontend:
+
+```bash
+npm run build
+```
+
+Run full stack locally:
+
+```bash
+npm run start
+```
+
+Local server runs at `http://localhost:3000`.
+
+## API Endpoints
 
 - `POST /api/upload`
 - `GET /api/files`
 - `DELETE /api/delete?id=<fileId>`
 - `GET /api/analytics`
 
-Analytics response includes:
+## Vercel Deployment
 
-- `totalFiles`
-- `totalStorage`
-- `avgSize`
-- `fileTypes`
-- `recent` (latest 5 uploads)
-
-## Deployment
-
-1. Push the repository to GitHub.
-2. Import it in Vercel.
-3. Add `MONGO_URI` in the Vercel environment settings.
+1. Push repository to GitHub.
+2. Import project into Vercel.
+3. Add environment variable `MONGO_URI` in Vercel Project Settings.
 4. Deploy.
 
-## Notes
+## Implementation Notes
 
-- The frontend is a React dashboard with Chart.js under `frontend/src`.
-- `api/db.js` caches the MongoDB client for serverless reuse.
-- `api/delete.js` uses real `ObjectId` values, so deletions work correctly with MongoDB documents.
+- `api/db.js` uses a cached MongoClient connection to avoid reconnect spam in serverless runtime.
+- The backend currently connects to database name `cloud_storage`.
+- `local-dev-server.js` loads `.env` using `dotenv` for local runs.

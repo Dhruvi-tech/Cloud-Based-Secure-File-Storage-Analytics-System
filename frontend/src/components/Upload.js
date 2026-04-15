@@ -10,6 +10,7 @@ function Upload() {
 
   const uploadFile = async fileToUpload => {
     if (!fileToUpload) {
+      alert('No file selected');
       setMessage('Please choose a file first.');
       toast.error('Please choose a file first');
       return;
@@ -24,7 +25,8 @@ function Upload() {
         body: JSON.stringify({
           filename: fileToUpload.name,
           size: fileToUpload.size,
-          type: fileToUpload.type || 'unknown'
+          type: fileToUpload.type || 'unknown',
+          user: localStorage.getItem('user') || 'anonymous'
         })
       });
 
